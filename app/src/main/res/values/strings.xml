@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">PictureMatchingGame</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="start">Start</string>
+    <string name="reset">Reset</string>
+    <string name="score">Score: --</string>
+    <string name="high_score">High Score: --</string>
+    <string name="result_score">Score</string>
+    <string name="play_again">Play Again</string>
+</resources>
