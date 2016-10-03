@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +23,8 @@ import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
+ * This is the main fragment of this application.  It contains the playing grid and the
+ * properties of the specific game instance.
  * @author Andrew Jarombek
  * @since 9/28/2016
  */
@@ -94,12 +95,18 @@ public class MainFragment extends Fragment {
         return v;
     }
 
+    /**
+     * Android onStart method - disables clicking on pictures that have already been matched
+     */
     @Override
     public void onStart() {
         super.onStart();
         disableButtons(incompleteLocations);
     }
 
+    /**
+     * Starts a new game from scratch, resets any old game data
+     */
     public void startNewGame() {
         Log.d(TAG, "Inside startNewGame.");
         incompleteLocations = new ArrayList<>(locations);
@@ -108,6 +115,11 @@ public class MainFragment extends Fragment {
         correctPicks = timesClicked = 0;
     }
 
+    /**
+     * Sets the picturelocations map for the game
+     * This method first gets 8 athletes to play with and then
+     * determines which tiles contain which hidden pictures
+     */
     protected void setPictureLocations() {
         Log.d(TAG, "Inside setPictureLocations.");
         // Make a set of athletes to be put on the playing board
@@ -128,7 +140,11 @@ public class MainFragment extends Fragment {
 
             // ImageButton for this tile
             final ImageButton ib = getImageButton(i);
+
+            // Populate the pictureLocations map with this buttons data
             pictureLocations.put(i, athlete);
+
+            // Gives each button metadata about what image the button is hiding
             ib.setTag(i);
         }
     }
@@ -189,16 +205,28 @@ public class MainFragment extends Fragment {
         disableTile(location);
     }
 
+    /**
+     * Make a button non clickable
+     * @param location the location of the button in the grid
+     */
     protected void disableTile(int location) {
         ImageButton ib = getImageButton(location);
         ib.setClickable(false);
     }
 
+    /**
+     * Make a button clickable
+     * @param location the location of the button in the grid
+     */
     protected void enableTile(int location) {
         ImageButton ib = getImageButton(location);
         ib.setClickable(true);
     }
 
+    /**
+     * Make a group of buttons non clickable
+     * @param locations a list of button locations in the grid
+     */
     protected void disableButtons(List<Integer> locations) {
         for (int i : locations) {
             ImageButton ib = getImageButton(i);
@@ -206,6 +234,10 @@ public class MainFragment extends Fragment {
         }
     }
 
+    /**
+     * Make a group of buttons clickable
+     * @param locations a list of button locations in the grid
+     */
     protected void enableButtons(List<Integer> locations) {
         for (int i : locations) {
             ImageButton ib = getImageButton(i);
@@ -213,11 +245,19 @@ public class MainFragment extends Fragment {
         }
     }
 
+    /**
+     * Reset all of the images on the playing board to the default image
+     */
     protected void resetImages() {
         for (int i : locations)
             flipTile(i);
     }
 
+    /**
+     * Show the hidden image at a specific tile on the board
+     * @param ib the ImageButton that should reveal its hidden image
+     * @param athlete the athlete that is hidden
+     */
     protected void showImage(ImageButton ib, String athlete) {
         Context context = getActivity();
         int id = context.getResources().getIdentifier(
@@ -225,6 +265,12 @@ public class MainFragment extends Fragment {
         ib.setImageDrawable(ContextCompat.getDrawable(getActivity(), id));
     }
 
+    /**
+     * After a rotation or other type of destruction of the app, this method helps to
+     * restore the image to match the current game state.  The logic of this scenario is more
+     * involved than showImage(), so it requires a separate method.
+     * @param location the location of the ImageButton in the playing grid
+     */
     protected void restoreImage(int location) {
         Log.d(TAG, "Inside restoreImage.");
         ImageButton ib = getImageButton(location);
@@ -247,12 +293,23 @@ public class MainFragment extends Fragment {
         enableTile(location);
     }
 
+    /**
+     * Gets the ImageButton object from a specific location in the playing grid
+     * @param location the location of the button
+     * @return the requested ImageButton
+     */
     protected ImageButton getImageButton(int location) {
         Resources r = getResources();
         int id = r.getIdentifier("i"+location,"id", getActivity().getPackageName());
         return (ImageButton) v.findViewById(id);
     }
 
+    /**
+     * The main logic behind when two moves have been made.  An overlay is first applied to
+     * the screen so nothing can be clicked on.  Then the method checks to see if the pictures
+     * are a match or not.
+     * @param match
+     */
     protected void interpretMove(boolean match) {
         final boolean isMatch = match;
         View overlay = getActivity().findViewById(R.id.overlay);
@@ -285,19 +342,36 @@ public class MainFragment extends Fragment {
         overlay.setVisibility(View.GONE);
     }
 
+    /**
+     * Getter method for the incompleteLocations list
+     * @return the incompleteLocations list
+     */
     public List<Integer> getIncompleteLocations() {
         return incompleteLocations;
     }
 
+    /**
+     * Getter method for the pictureLocations map
+     * @return the pictureLocations map
+     */
     public Map<Integer, String> getPictureLocations() {
         return pictureLocations;
     }
 
+    /**
+     * Creates and returns a GameState object which is a snapshot of the current state of
+     * the game
+     * @return the current GameState
+     */
     public GameState getGameState() {
         return new GameState(pictureLocations, incompleteLocations, timesClicked,
                 ((MainActivity) getActivity()).getHighScore());
     }
 
+    /**
+     * Restores a saved GameState, likely after a rotation change.
+     * @param gameState the GameState that a app should be set to
+     */
     public void restoreGameState(GameState gameState) {
         Log.d(TAG, "Inside restoreGameState.");
         pictureLocations = gameState.getPictureLocations();
