@@ -13,6 +13,8 @@ import java.util.Map;
 public class GameState implements Serializable {
 
     private Map<Integer, String> pictureLocations;
+    private List<Integer> pickedLocation;
+    private List<String> pickedAthlete;
     private List<Integer> unrevealed;
     private int score, highscore;
 
@@ -26,9 +28,12 @@ public class GameState implements Serializable {
      * @param highscore the high score of the user across all of the games played
      */
     public GameState(Map<Integer, String> pictureLocations, List<Integer> unrevealed,
+                     List<Integer> pickedLocation, List<String> pickedAthlete,
                      int score, int highscore) {
         this.pictureLocations = pictureLocations;
         this.unrevealed = unrevealed;
+        this.pickedLocation = pickedLocation;
+        this.pickedAthlete = pickedAthlete;
         this.score = score;
         this.highscore = highscore;
     }
@@ -65,5 +70,21 @@ public class GameState implements Serializable {
 
     public void setHighscore(int highscore) {
         this.highscore = highscore;
+    }
+
+    public List<Integer> getPickedLocation() {
+        return pickedLocation;
+    }
+
+    public void setPickedLocation(List<Integer> pickedLocation) {
+        this.pickedLocation = pickedLocation;
+    }
+
+    public List<String> getPickedAthlete() {
+        return pickedAthlete;
+    }
+
+    public void setPickedAthlete(List<String> pickedAthlete) {
+        this.pickedAthlete = pickedAthlete;
     }
 }

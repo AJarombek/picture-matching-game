@@ -102,6 +102,9 @@ public class MainActivity extends FragmentActivity {
         super.onSaveInstanceState(outState);
         Log.d(TAG, "Inside onSaveInstanceState.");
 
+        if (((MainFragment) fragment).getCorrectPicks() == 8)
+            ((MainFragment) fragment).startNewGame();
+
         // Save the current game state
         outState.putSerializable(KEY, ((MainFragment) fragment).getGameState());
     }

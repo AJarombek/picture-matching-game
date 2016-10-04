@@ -34,7 +34,8 @@ public class MainFragment extends Fragment {
     private static final int NUMBER_OF_PICTURES = 16;
     private static final int NUMBER_OF_ATHLETES = 32;
 
-    private int timesClicked, correctPicks;
+    private int timesClicked;
+    private int correctPicks;
     private List<String> pickedAthlete;
     private List<Integer> pickedLocation;
     private List<Integer> incompleteLocations;
@@ -364,8 +365,8 @@ public class MainFragment extends Fragment {
      * @return the current GameState
      */
     public GameState getGameState() {
-        return new GameState(pictureLocations, incompleteLocations, timesClicked,
-                ((MainActivity) getActivity()).getHighScore());
+        return new GameState(pictureLocations, incompleteLocations, pickedLocation, pickedAthlete,
+                timesClicked, ((MainActivity) getActivity()).getHighScore());
     }
 
     /**
@@ -376,10 +377,25 @@ public class MainFragment extends Fragment {
         Log.d(TAG, "Inside restoreGameState.");
         pictureLocations = gameState.getPictureLocations();
         incompleteLocations = gameState.getUnrevealed();
+        pickedLocation = gameState.getPickedLocation();
+        pickedAthlete = gameState.getPickedAthlete();
+
+        if (!pickedLocation.isEmpty() && pickedLocation.get(0) != null) {
+            showImage(getImageButton(pickedLocation.get(0)), pickedAthlete.get(0));
+        }
+
         initViews(pictureLocations);
         for (int l : locations) {
             if (!incompleteLocations.contains(l))
                 restoreImage(l);
         }
+    }
+
+    /**
+     * Getter method for correctPicks
+     * @return the correct number of picks made
+     */
+    public int getCorrectPicks() {
+        return correctPicks;
     }
 }
