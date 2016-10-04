@@ -169,6 +169,13 @@ public class MainActivity extends FragmentActivity {
     }
 
     /**
+     * Pause the current game by bringing up the pause menu
+     */
+    public void pause() {
+        pausedView.setVisibility(View.VISIBLE);
+    }
+
+    /**
      * Getter method for the high score
      * @return the high score
      */

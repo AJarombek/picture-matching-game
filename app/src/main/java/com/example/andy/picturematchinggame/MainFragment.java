@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -181,7 +182,10 @@ public class MainFragment extends Fragment {
                     } else {
                         disableButtons(incompleteLocations);
                         pick(location, athlete);
-                        if (pickedAthlete.get(0).equals(pickedAthlete.get(1))) {
+                        if (pickedAthlete.size() < 2) {
+                            // Something went wrong
+                            userAbuse();
+                        } else if (pickedAthlete.get(0).equals(pickedAthlete.get(1))) {
                             // We have a match!
                             interpretMove(true);
                         } else {
@@ -321,6 +325,12 @@ public class MainFragment extends Fragment {
             public void run() {
                 if (isMatch) {
                     correctPicks++;
+
+                    if (incompleteLocations.size() < 2) {
+                        // Something went wrong
+                        userAbuse();
+                    }
+
                     incompleteLocations.remove(pickedLocation.get(0));
                     incompleteLocations.remove(pickedLocation.get(1));
                     if (correctPicks == NUMBER_OF_PICTURES / 2) {
@@ -397,5 +407,20 @@ public class MainFragment extends Fragment {
      */
     public int getCorrectPicks() {
         return correctPicks;
+    }
+
+    /**
+     * Method that hopefully won't have to be called.  If the user is abusing the app,
+     * trying to make it crash.  Currently too many corner cases to save the app on all
+     * crashing opportunities.
+     */
+    protected void userAbuse() {
+        ((MainActivity)getActivity()).updateScore(0);
+        startNewGame();
+        Toast.makeText(getActivity(), "INVALID MOVE: Stop abusing my game!",
+                Toast.LENGTH_LONG).show();
+        disableButtons(locations);
+        ((MainActivity)getActivity()).pause();
+        resetImages();
     }
 }
